@@ -1,0 +1,52 @@
+{
+  "name": "rbac-sys-server",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npm-run-all -s swagger start:dev",
+    "swagger": "ts-node src/swagger/index.ts",
+    "start:dev": "cross-env NODE_ENV=development nodemon -r tsconfig-paths/register src/index.ts",
+    "start:prod": "cross-env NODE_ENV=production ts-node -r tsconfig-paths/register dist/src/index.js",
+    "prod": "npm-run-all -s build start:prod",
+    "build": "tsc"
+  },
+  "author": "kattle",
+  "license": "MIT",
+  "description": "rbac系统服务端",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.4",
+    "@types/passport": "^1.0.17",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/swagger-ui-express": "^4.1.7",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9",
+    "npm-run-all": "^4.1.5",
+    "swagger-autogen": "^2.23.7",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@sequelize/core": "7.0.0-alpha.43",
+    "@sequelize/mysql": "7.0.0-alpha.43",
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.8",
+    "@types/morgan": "^1.9.9",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "bcrypt": "^5.1.1",
+    "dayjs": "^1.11.13",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "morgan": "^1.10.0",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^11.0.5",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  }
+}

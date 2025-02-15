@@ -1,0 +1,6 @@
+.env.development
+.env.production
+node_modules
+dist
+src/logs
+src/swagger/swagger-output.json
