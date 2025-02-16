@@ -14,11 +14,6 @@ export const login = async (
       lastLoginIp: req.ip,
     });
 
-    if (!loginSuccess) {
-      res.send(resBodyBuilder(null, "用户名或密码错误", -1));
-      return;
-    }
-
     res.setHeader("Authorization", loginSuccess);
 
     res.send(resBodyBuilder(null, "登录成功"));
