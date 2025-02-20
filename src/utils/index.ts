@@ -2,6 +2,8 @@ import type { ResBody } from "@/types/global";
 import { ValidationError } from "@sequelize/core/_non-semver-use-at-your-own-risk_/errors/validation-error.js";
 import config from "@/config";
 import Joi from "joi";
+import { InferAttributes, Model, WhereOptions } from "@sequelize/core";
+import _ from "lodash";
 
 const { PAGE_SIZE } = config;
 
@@ -62,9 +64,12 @@ export const getValidPageAndSize = (
  * @param msg 错误消息
  * @returns id对象模式
  */
-export const getIdObjectSchema = (msg: string = "id格式不正确") =>
+export const getIdObjectSchema = (
+  msg: string = "id格式不正确",
+  fieldName: string = "id"
+) =>
   Joi.object({
-    id: Joi.number().required().label(msg),
+    [fieldName]: Joi.number().required().label(msg),
   });
 
 /**
@@ -72,10 +77,25 @@ export const getIdObjectSchema = (msg: string = "id格式不正确") =>
  * @param msg 错误消息
  * @returns ids对象模式
  */
-export const getIdsObjectSchema = (msg: string = "ids格式不正确") =>
+export const getIdsObjectSchema = (
+  msg: string = "ids格式不正确",
+  fieldName: string = "ids",
+  pattern: RegExp = /^[a-zA-Z0-9]+(,[a-zA-Z0-9]+)*$/
+) =>
   Joi.object({
-    ids: Joi.string()
-      .pattern(/^\d+(,\d+)*$/)
-      .required()
-      .label(msg),
+    [fieldName]: Joi.string().pattern(pattern).required().label(msg),
   });
+
+export const generateWhereOptions = <T extends Model>(
+  options: InferAttributes<T> & Record<string, any>,
+  whereOptionsHandler: (
+    obj: InferAttributes<T> & Record<string, any>
+  ) => WhereOptions<InferAttributes<T>>
+) => {
+  const whereOptions = whereOptionsHandler(options);
+
+  return _.pickBy(
+    whereOptions as Record<string, any>,
+    (value) => !_.isUndefined(value)
+  ) as WhereOptions<InferAttributes<T>>;
+};

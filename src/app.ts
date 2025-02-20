@@ -10,7 +10,6 @@ import { errorLogger } from "./logger/winston";
 import { resBodyBuilder } from "./utils";
 import passport from "passport";
 const { PORT } = config;
-// console.log("config", config);
 
 const app = express();
 
@@ -35,7 +34,7 @@ app.use(morganLogger);
 app.use(express.json());
 
 // 挂载路由
-app.use(router);
+app.use("/api", router);
 
 // 错误处理中间件
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

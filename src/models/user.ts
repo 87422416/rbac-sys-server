@@ -14,13 +14,8 @@ import {
   AutoIncrement,
   ColumnName,
   Unique,
+  AllowNull,
 } from "@sequelize/core/decorators-legacy";
-
-export enum UserRole {
-  ADMIN = "admin",
-  MERCHANT = "merchant",
-  USER = "user",
-}
 
 @Table({
   paranoid: true,

@@ -12,7 +12,7 @@ export default (schema: Joi.ObjectSchema, position: keyof Request = "body") => {
         process.env.NODE_ENV === "development"
           ? `${position as string}参数错误: ${error.message}`
           : "参数错误";
-      res.send(resBodyBuilder(null, msg, -1));
+      next(new Error(msg));
       return;
     }
 

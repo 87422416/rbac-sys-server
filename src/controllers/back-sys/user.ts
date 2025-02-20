@@ -9,6 +9,7 @@ export const createUser = async (
   res: Response,
   next: NextFunction
 ) => {
+  // #swagger.tags = ['user']
   try {
     const {
       username,
@@ -40,13 +41,42 @@ export const getUsersByPage = async (
   res: Response,
   next: NextFunction
 ) => {
+  // #swagger.tags = ['user']
   try {
+    const {
+      username,
+      email,
+      phone,
+      status,
+      lastLoginTime,
+      lastLoginIp,
+      failedLoginAttempts,
+      unlockTime,
+      createdAtStart,
+      createdAtEnd,
+      updatedAtStart,
+      updatedAtEnd,
+    } = req.query;
+
     const { page, pageSize } = getValidPageAndSize(
       req.query.page,
       req.query.pageSize
     );
 
-    const users = await UserService.getUsersByPage(page, pageSize);
+    const users = await UserService.getUsersByPage(page, pageSize, {
+      username,
+      email,
+      phone,
+      status,
+      lastLoginTime,
+      lastLoginIp,
+      failedLoginAttempts,
+      unlockTime,
+      createdAtStart,
+      createdAtEnd,
+      updatedAtStart,
+      updatedAtEnd,
+    });
 
     res.send(resBodyBuilder(users, "获取用户列表成功"));
   } catch (error) {
@@ -61,14 +91,11 @@ export const getUserById = async (
   res: Response,
   next: NextFunction
 ) => {
+  // #swagger.tags = ['user']
   try {
     const { id } = req.params;
 
     const user = await UserService.getUserById(+id);
-
-    if (!user) {
-      throw new Error("用户不存在");
-    }
 
     res.send(resBodyBuilder(user, "获取用户成功"));
   } catch (error) {
@@ -83,6 +110,7 @@ export const updateUser = async (
   res: Response,
   next: NextFunction
 ) => {
+  // #swagger.tags = ['user']
   try {
     const { id } = req.params;
     const {
@@ -118,6 +146,7 @@ export const deleteUsers = async (
   res: Response,
   next: NextFunction
 ) => {
+  // #swagger.tags = ['user']
   try {
     const { ids } = req.params;
 
@@ -132,6 +161,25 @@ export const deleteUsers = async (
     res.send(resBodyBuilder(count, "删除用户成功"));
   } catch (error) {
     let msg = getErrorMessage(error) || "删除用户失败";
+
+    next(new Error(msg));
+  }
+};
+
+export const getUserRole = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // #swagger.tags = ['user']
+  try {
+    const { id } = req.params;
+
+    const roles = await UserService.getUserRoles(+id);
+
+    res.send(resBodyBuilder(roles, "获取用户角色成功"));
+  } catch (error) {
+    let msg = getErrorMessage(error) || "获取用户角色失败";
 
     next(new Error(msg));
   }

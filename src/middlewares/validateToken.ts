@@ -2,10 +2,7 @@ import passportJWT from "passport-jwt";
 import passport from "passport";
 import config from "@/config";
 import User from "@/models/user";
-
-interface JWTPayload {
-  userId: number;
-}
+import UserService from "@/services/userService";
 
 const { JWT_SECRET_KEY } = config;
 
@@ -21,9 +18,13 @@ const opts = {
 passport.use(
   new JwtStrategy(opts, async (jwt_payload: JWTPayload, done) => {
     const user = await User.findByPk(jwt_payload.userId);
-    
+
     if (user && user.status !== "locked") {
-      return done(null, user); // 用户存在，返回用户信息
+      // 获取用户信息
+      // @ts-ignore
+      const roles = await UserService.getUserRoles(user.id);
+
+      return done(null, { userId: user.id, roles }); // 用户存在，返回用户信息
     } else {
       return done(null, false); // 用户不存在，返回 false
     }

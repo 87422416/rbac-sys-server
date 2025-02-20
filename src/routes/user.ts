@@ -2,15 +2,16 @@ import {
   createUser,
   deleteUsers,
   getUserById,
+  getUserRole,
   getUsersByPage,
   updateUser,
 } from "@/controllers/back-sys/user";
 import router from "./router";
-import validate from "@/middlewares/validateInput";
+import validateInput from "@/middlewares/validateInput";
 import Joi from "joi";
 import validateToken from "@/middlewares/validateToken";
-import validateInput from "@/middlewares/validateInput";
 import { getIdObjectSchema, getIdsObjectSchema } from "@/utils";
+import validatePermission from "@/middlewares/validatePermission";
 
 interface UserBody {
   username: string;
@@ -40,16 +41,18 @@ export const CreateUserObjectSchema = Joi.object<CreateUserBody>({
 router.post(
   "/user",
   validateToken,
-  validate(CreateUserObjectSchema),
+  validateInput(CreateUserObjectSchema),
+  validatePermission,
   createUser
 );
 
-router.get("/users", validateToken, getUsersByPage);
+router.get("/users", validateToken, validatePermission, getUsersByPage);
 
 router.get(
   "/user/:id",
   validateToken,
   validateInput(getIdObjectSchema(), "params"),
+  validatePermission,
   getUserById
 );
 
@@ -71,6 +74,7 @@ router.put(
   validateToken,
   validateInput(getIdObjectSchema(), "params"),
   validateInput(PutUserObjectSchema, "body"),
+  validatePermission,
   updateUser
 );
 
@@ -78,5 +82,14 @@ router.delete(
   "/users/:ids",
   validateToken,
   validateInput(getIdsObjectSchema(), "params"),
+  validatePermission,
   deleteUsers
+);
+
+router.get(
+  "/user/role/:id",
+  validateToken,
+  validateInput(getIdObjectSchema(), "params"),
+  validatePermission,
+  getUserRole
 );

@@ -36,6 +36,8 @@
     "@types/morgan": "^1.9.9",
     "@types/swagger-jsdoc": "^6.0.4",
     "bcrypt": "^5.1.1",
+    "casbin": "^5.38.0",
+    "casbin-sequelize-adapter": "^2.7.1",
     "dayjs": "^1.11.13",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",

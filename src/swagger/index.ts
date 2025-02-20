@@ -7,6 +7,7 @@ const doc = {
     description: "RBAC API 文档",
   },
   host: "localhost:8899",
+  basePath: "/api",
   security: [
     {
       bearerAuth: [],
@@ -20,7 +21,7 @@ const doc = {
         bearerFormat: "JWT",
       },
     },
-  },
+  }
 };
 const outputFile = "src/swagger/swagger-output.json"; // 输出的 JSON 文件
 const endpointsFiles = ["src/routes/*.ts"]; // 要扫描的路由文件

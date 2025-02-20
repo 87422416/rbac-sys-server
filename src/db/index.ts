@@ -6,7 +6,7 @@ import { MySqlDialect } from "@sequelize/mysql";
 
 const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT } = config;
 
-const sequelize = new Sequelize({
+export const sequelize = new Sequelize({
   dialect: MySqlDialect,
   database: DB_NAME,
   user: DB_USERNAME,

@@ -15,7 +15,7 @@ export default class LogService {
   ): Promise<string> {
     const user = await User.findOne({ where: { username } });
     if (!user) {
-      throw new Error("账号密码错误");
+      throw new Error("账号错误");
     }
 
     // 验证账号状态
@@ -26,7 +26,7 @@ export default class LogService {
     // 验证密码
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new Error("账号密码错误");
+      throw new Error("密码错误");
     }
 
     // 生成token
