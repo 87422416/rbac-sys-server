@@ -10,7 +10,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
   const user = req.user;
 
   if (!user || !user.roles) {
-    next(new Error("账号未登录"));
+    next(new Error("权限不足"));
     return;
   }
 
@@ -22,7 +22,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
   const matchingRoute = findMatchingRoute(router, path, method);
 
   if (!matchingRoute) {
-    next(new Error("路由不存在"));
+    next(new Error("权限不足"));
     return;
   }
 

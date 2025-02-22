@@ -72,4 +72,8 @@ export default class User extends Model<
   @Attribute(DataTypes.DATE)
   @Comment("解除封禁时间")
   declare unlockTime?: Date | null;
+
+  @Attribute(DataTypes.JSON)
+  @Comment("菜单")
+  declare menu: string;
 }

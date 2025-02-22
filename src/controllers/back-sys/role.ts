@@ -1,5 +1,5 @@
 import Role from "@/models/role";
-import { RoleService } from "@/services/roleService/roleService";
+import { RoleService } from "@/services/roleService";
 import { resBodyBuilder } from "@/utils";
 import { getErrorMessage } from "@/utils";
 import { InferAttributes } from "@sequelize/core";

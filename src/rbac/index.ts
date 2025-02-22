@@ -27,13 +27,13 @@ async function getAdapter() {
 }
 
 // 统一的初始化函数，接收不同的模型文件和配置
-async function initEnforcer(modelFile: string, enforcerType: "rbac" | "menu") {
+async function initEnforcer(modelFile: string) {
   try {
-    const enforcer = enforcerType === "rbac" ? rbacEnforcer : menuEnforcer;
+    const enforcer = rbacEnforcer;
     if (enforcer) {
       // 加载策略
       await enforcer.loadPolicy();
-      console.log(`${enforcerType.toUpperCase()} enforcer loaded successfully`);
+      console.log(`rbacEnforcer loaded successfully`);
       return;
     }
 
@@ -45,28 +45,16 @@ async function initEnforcer(modelFile: string, enforcerType: "rbac" | "menu") {
     // 加载策略
     await newEnforcer.loadPolicy();
 
-    if (enforcerType === "rbac") {
-      rbacEnforcer = newEnforcer;
-      console.log("RBAC enforcer initialized successfully");
-    } else {
-      menuEnforcer = newEnforcer;
-      console.log("Menu enforcer initialized successfully");
-    }
+    rbacEnforcer = newEnforcer;
+    console.log("RBAC enforcer initialized successfully");
   } catch (error) {
-    console.error(
-      `Error initializing ${enforcerType.toUpperCase()} enforcer:`,
-      error
-    );
+    console.error(`Error initializing rbacEnforcer:`, error);
   }
 }
 
 // 针对 RBAC 和 Menu 调用的函数
 export async function initRBACEnforcer() {
-  await initEnforcer("rbac_model.conf", "rbac");
-}
-
-export async function initMenuEnforcer() {
-  await initEnforcer("menu_model.conf", "menu");
+  await initEnforcer("rbac_model.conf");
 }
 
 export function getRBACEnforcer() {
@@ -74,11 +62,4 @@ export function getRBACEnforcer() {
     throw new Error("RBAC enforcer not initialized");
   }
   return rbacEnforcer;
-}
-
-export function getMenuEnforcer() {
-  if (!menuEnforcer) {
-    throw new Error("Menu enforcer not initialized");
-  }
-  return menuEnforcer;
 }

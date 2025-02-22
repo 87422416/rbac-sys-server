@@ -30,11 +30,6 @@ export class PermissionService {
 
   // 查看角色的权限
   static async getPermissionsByRole(role: string) {
-    const roleInstance = await Role.findOne<Role>({ where: { label: role } });
-    if (!roleInstance) {
-      throw new Error("角色不存在");
-    }
-
     const rbacEnforcer = getRBACEnforcer();
     // 重新加载策略
     await rbacEnforcer.loadPolicy();
@@ -53,7 +48,7 @@ export class PermissionService {
   static async setPermissionsByRole(role: string, permissions: string[][]) {
     const roleInstance = await Role.findOne<Role>({ where: { label: role } });
     if (!roleInstance) {
-      throw new Error(`${role}角色不存在`);
+      throw new Error("角色不存在");
     }
 
     const rbacEnforcer = getRBACEnforcer();

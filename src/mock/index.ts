@@ -1,6 +1,6 @@
 import User from "@/models/user";
 import { PermissionService } from "@/services/permissionService";
-import { RoleService } from "@/services/roleService/roleService";
+import { RoleService } from "@/services/roleService";
 import UserService from "@/services/userService";
 import { InferAttributes } from "@sequelize/core";
 import router from "@/routes/router";
@@ -38,7 +38,12 @@ export const mockRoleInheritance = async (role: string, parentRole: string) => {
 
 export default async function mock() {
   // 初始化账号
-  await mockUser({ username: "kattle", password: "kattle" });
+  await mockUser({
+    username: "kattle",
+    password: "kattle",
+    menu:
+      '[{"key":"/user","title":"用户管理","value":"/user"},{"key":"/role","title":"角色管理","value":"/role"},{"key":"/permission","title":"权限管理","value":"/permission"},{"key":"/menu","title":"菜单管理","value":"/menu"}]',
+  });
 
   // 清空casbin_rule
   await sequelize.query("DELETE FROM casbin_rule");
@@ -48,11 +53,13 @@ export default async function mock() {
   await mockRole("用户管理员");
   await mockRole("角色管理员");
   await mockRole("权限管理员");
+  await mockRole("菜单管理员");
 
   // 初始化角色继承
   await mockRoleInheritance("用户管理员", "超级管理员");
   await mockRoleInheritance("角色管理员", "超级管理员");
   await mockRoleInheritance("权限管理员", "超级管理员");
+  await mockRoleInheritance("菜单管理员", "超级管理员");
 
   // 初始化角色权限
   await PermissionService.setPermissionsByRole("角色管理员", [
@@ -80,6 +87,11 @@ export default async function mock() {
     ["/permissions/:role", "post"],
     ["/permissions/:role", "get"],
     ["/permissions/:role", "delete"],
+  ]);
+
+  await PermissionService.setPermissionsByRole("菜单管理员", [
+    ["/menu", "get"],
+    ["/menu/:userId", "get"],
   ]);
 
   // 分配角色给账号

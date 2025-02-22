@@ -18,6 +18,7 @@ export const createUser = async (
       email,
       phone,
       avatar,
+      menu,
     } = req.body as InferAttributes<User> & { confirmPassword: string };
 
     await UserService.createUser({
@@ -26,6 +27,7 @@ export const createUser = async (
       email,
       phone,
       avatar,
+      menu,
     });
 
     res.send(resBodyBuilder(null, "创建用户成功"));

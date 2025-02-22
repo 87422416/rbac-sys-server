@@ -24,7 +24,7 @@ export async function initDB() {
   try {
     await sequelize.authenticate();
     console.log("数据库连接成功");
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ force: true });
     console.log("数据库表同步成功");
     // event.emit("dbReady");
   } catch (error) {
