@@ -1,6 +1,6 @@
-import User from "@/models/user";
-import LogService from "@/services/logService";
-import { getErrorMessage, resBodyBuilder } from "@/utils";
+import User from "../../models/user";
+import LogService from "../../services/logService";
+import { getErrorMessage, resBodyBuilder } from "../../utils";
 import { NextFunction, Request, Response } from "express";
 
 export const login = async (

@@ -1,8 +1,8 @@
 import passportJWT from "passport-jwt";
 import passport from "passport";
-import config from "@/config";
-import User from "@/models/user";
-import UserService from "@/services/userService";
+import config from "../config";
+import User from "../models/user";
+import UserService from "../services/userService";
 
 const { JWT_SECRET_KEY } = config;
 

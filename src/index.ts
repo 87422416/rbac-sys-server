@@ -1,6 +1,6 @@
-import { initDB } from "@/db";
-import { startServer } from "@/app";
-import { initRBACEnforcer } from "@/rbac";
+import { initDB } from "./db";
+import { startServer } from "./app";
+import { initRBACEnforcer } from "./rbac";
 import mock from "./mock";
 
 (async () => {

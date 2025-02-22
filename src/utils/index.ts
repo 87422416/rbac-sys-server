@@ -1,6 +1,6 @@
-import type { ResBody } from "@/types/global";
+import type { ResBody } from "../types/global";
 import { ValidationError } from "@sequelize/core/_non-semver-use-at-your-own-risk_/errors/validation-error.js";
-import config from "@/config";
+import config from "../config";
 import Joi from "joi";
 import { InferAttributes, Model, WhereOptions } from "@sequelize/core";
 import _ from "lodash";

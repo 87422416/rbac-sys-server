@@ -1,9 +1,9 @@
-import { getMenuTree, getMenuTreeByUserId } from "@/controllers/back-sys/menu";
+import { getMenuTree, getMenuTreeByUserId } from "../controllers/back-sys/menu";
 import router from "./router";
 import Joi from "joi";
-import validateInput from "@/middlewares/validateInput";
-import validatePermission from "@/middlewares/validatePermission";
-import validateToken from "@/middlewares/validateToken";
+import validateInput from "../middlewares/validateInput";
+import validatePermission from "../middlewares/validatePermission";
+import validateToken from "../middlewares/validateToken";
 
 router.get("/menu",validateToken,validatePermission, getMenuTree);
 

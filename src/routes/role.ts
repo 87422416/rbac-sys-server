@@ -7,13 +7,13 @@ import {
   getUsersIdByRole,
   setRoleInheritance,
   getRolesInheritanceTree,
-} from "@/controllers/back-sys/role";
+} from "../controllers/back-sys/role";
 import router from "./router";
-import validate from "@/middlewares/validateInput";
+import validate from "../middlewares/validateInput";
 import Joi from "joi";
-import validateInput from "@/middlewares/validateInput";
-import validateToken from "@/middlewares/validateToken";
-import validatePermission from "@/middlewares/validatePermission";
+import validateInput from "../middlewares/validateInput";
+import validateToken from "../middlewares/validateToken";
+import validatePermission from "../middlewares/validatePermission";
 interface RoleBody {
   label: string;
 }

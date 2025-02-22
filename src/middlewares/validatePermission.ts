@@ -1,6 +1,6 @@
-import { getRBACEnforcer } from "@/rbac";
+import { getRBACEnforcer } from "../rbac";
 import { Request, Response, NextFunction } from "express";
-import router from "@/routes/index";
+import router from "../routes/index";
 import { ILayer } from "express-serve-static-core";
 import _ from "lodash";
 

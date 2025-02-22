@@ -1,5 +1,5 @@
-import { PermissionService } from "@/services/permissionService";
-import { getErrorMessage, resBodyBuilder } from "@/utils";
+import { PermissionService } from "../../services/permissionService";
+import { getErrorMessage, resBodyBuilder } from "../../utils";
 import { Request, Response, NextFunction } from "express";
 
 export const getPermissionsByRole = async (

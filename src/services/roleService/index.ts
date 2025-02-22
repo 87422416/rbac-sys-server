@@ -1,9 +1,9 @@
-import Role from "@/models/role";
-import { getRBACEnforcer } from "@/rbac";
+import Role from "../../models/role";
+import { getRBACEnforcer } from "../../rbac";
 import UserService from "../userService";
 import { buildRoleInheritanceTreeById } from "./utils";
 import { Op } from "@sequelize/core";
-import { generateWhereOptions } from "@/utils";
+import { generateWhereOptions } from "../../utils";
 
 export class RoleService {
   // 创建角色

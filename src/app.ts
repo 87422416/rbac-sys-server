@@ -1,10 +1,10 @@
 import express, { Request, Response, NextFunction } from "express";
-import config from "@/config";
-import router from "@/routes";
-// @ts-ignore
-import swaggerDocs from "@/swagger/swagger-output.json";
+import config from "./config";
+import router from "./routes";
 import swaggerUi from "swagger-ui-express";
-import { morganLogger } from "@/logger/morgan";
+// @ts-ignore
+import swaggerDocs from "./swagger/swagger-output.json";
+import { morganLogger } from "./logger/morgan";
 import { v4 as uuidv4 } from "uuid";
 import { errorLogger } from "./logger/winston";
 import { resBodyBuilder } from "./utils";

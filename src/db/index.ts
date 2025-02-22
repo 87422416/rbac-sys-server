@@ -1,6 +1,6 @@
 import { Sequelize } from "@sequelize/core";
-import config from "@/config";
-import models from "@/models/index";
+import config from "../config";
+import models from "../models/index";
 import { MySqlDialect } from "@sequelize/mysql";
 // import event from "../utils/eventEmitter";
 

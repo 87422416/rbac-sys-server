@@ -5,13 +5,13 @@ import {
   getUserRole,
   getUsersByPage,
   updateUser,
-} from "@/controllers/back-sys/user";
+} from "../controllers/back-sys/user";
 import router from "./router";
-import validateInput from "@/middlewares/validateInput";
+import validateInput from "../middlewares/validateInput";  
 import Joi from "joi";
-import validateToken from "@/middlewares/validateToken";
-import { getIdObjectSchema, getIdsObjectSchema } from "@/utils";
-import validatePermission from "@/middlewares/validatePermission";
+import validateToken from "../middlewares/validateToken";
+import { getIdObjectSchema, getIdsObjectSchema } from "../utils";
+import validatePermission from "../middlewares/validatePermission";
 
 interface UserBody {
   username: string;

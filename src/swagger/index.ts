@@ -30,6 +30,7 @@ const endpointsFiles = ["src/routes/*.ts"]; // 要扫描的路由文件
   const result = await swaggerAutogen({
     openapi: "3.0.0",
   })(outputFile, endpointsFiles, doc);
+  
   if (result as any) {
     console.log("Swagger doc generated!");
   } else {

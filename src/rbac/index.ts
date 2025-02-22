@@ -1,12 +1,11 @@
 import { SequelizeAdapter } from "casbin-sequelize-adapter";
 import * as casbin from "casbin";
-import config from "@/config";
+import config from "../config";
 import path from "path";
 
 const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT } = config;
 
 let rbacEnforcer: casbin.Enforcer | null = null;
-let menuEnforcer: casbin.Enforcer | null = null;
 
 async function getAdapter() {
   try {
@@ -54,6 +53,8 @@ async function initEnforcer(modelFile: string) {
 
 // 针对 RBAC 和 Menu 调用的函数
 export async function initRBACEnforcer() {
+  // 初始化 RBAC 模型
+  
   await initEnforcer("rbac_model.conf");
 }
 

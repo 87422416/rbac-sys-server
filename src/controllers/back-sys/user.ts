@@ -1,8 +1,8 @@
-import UserService from "@/services/userService";
-import { getErrorMessage, getValidPageAndSize, resBodyBuilder } from "@/utils";
+import UserService from "../../services/userService";
+import { getErrorMessage, getValidPageAndSize, resBodyBuilder } from "../../utils";
 import { Request, Response, NextFunction } from "express";
 import { InferAttributes } from "@sequelize/core";
-import User from "@/models/user";
+import User from "../../models/user";
 
 export const createUser = async (
   req: Request,

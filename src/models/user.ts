@@ -12,9 +12,7 @@ import {
   Comment,
   Table,
   AutoIncrement,
-  ColumnName,
   Unique,
-  AllowNull,
 } from "@sequelize/core/decorators-legacy";
 
 @Table({

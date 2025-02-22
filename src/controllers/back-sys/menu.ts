@@ -1,6 +1,5 @@
-import { MenuService } from "@/services/menuService";
-import UserService from "@/services/userService";
-import { getErrorMessage, resBodyBuilder } from "@/utils";
+import { MenuService } from "../../services/menuService";
+import { getErrorMessage, resBodyBuilder } from "../../utils";
 import { NextFunction, Request, Response } from "express";
 
 export const getMenuTree = async (

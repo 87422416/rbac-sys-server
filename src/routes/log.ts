@@ -1,7 +1,7 @@
-import { login } from "@/controllers/back-sys/log";
+import { login } from "../controllers/back-sys/log";
 import router from "./router";
 import Joi from "joi";
-import validateInput from "@/middlewares/validateInput";
+import validateInput from "../middlewares/validateInput";
 
 interface LoginBody {
   username: string;

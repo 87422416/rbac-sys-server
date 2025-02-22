@@ -1,11 +1,11 @@
-import User from "@/models/user";
-import config from "@/config";
+import User from "../models/user";
+import config from "../config";
 import bcrypt from "bcrypt";
 import { InferAttributes } from "@sequelize/core/_non-semver-use-at-your-own-risk_/model.js";
-import { Op, WhereOptions } from "@sequelize/core";
-import { getRBACEnforcer } from "@/rbac";
+import { Op } from "@sequelize/core";
+import { getRBACEnforcer } from "../rbac";
 import _ from "lodash";
-import { generateWhereOptions } from "@/utils";
+import { generateWhereOptions } from "../utils";
 const { CRYPT_SALT } = config;
 
 export default class UserService {

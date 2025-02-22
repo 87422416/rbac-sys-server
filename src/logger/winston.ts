@@ -1,6 +1,6 @@
 import winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
-import config from "@/config";
+import config from "../config";
 
 const {
   LOG_INFO_FILE_NAME,

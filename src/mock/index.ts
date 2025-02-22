@@ -1,10 +1,11 @@
-import User from "@/models/user";
-import { PermissionService } from "@/services/permissionService";
-import { RoleService } from "@/services/roleService";
-import UserService from "@/services/userService";
+import User from "../models/user";
+import { PermissionService } from "../services/permissionService";
+import { RoleService } from "../services/roleService";
+import UserService from "../services/userService";
 import { InferAttributes } from "@sequelize/core";
-import router from "@/routes/router";
-import { sequelize } from "@/db";
+import router from "../routes/router";
+import { sequelize } from "../db";
+
 export const mockRole = async (role: string) => {
   await RoleService.createRole(role);
 };

@@ -1,5 +1,5 @@
-import validateToken from "@/middlewares/validateToken";
-import validateInput from "@/middlewares/validateInput";
+import validateToken from "../middlewares/validateToken";
+import validateInput from "../middlewares/validateInput";
 import router from "./router";
 import Joi from "joi";
 import {
@@ -7,8 +7,8 @@ import {
   getPermissionsByRole,
   getPermissions,
   setPermissionsByRole,
-} from "@/controllers/back-sys/permission";
-import validatePermission from "@/middlewares/validatePermission";
+} from "../controllers/back-sys/permission";
+import validatePermission from "../middlewares/validatePermission";
 
 router.get("/permissions", validateToken, validatePermission, getPermissions);
 

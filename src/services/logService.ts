@@ -1,6 +1,5 @@
-import config from "@/config";
-import User from "@/models/user";
-import { Attributes } from "@sequelize/core";
+import config from "../config";
+import User from "../models/user";
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
 import jwt from "jsonwebtoken";

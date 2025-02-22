@@ -1,6 +1,6 @@
-import { getRBACEnforcer } from "@/rbac";
-import Role from "@/models/role";
-import router from "@/routes";
+import { getRBACEnforcer } from "../rbac";
+import Role from "../models/role";
+import router from "../routes";
 
 export class PermissionService {
   // 删除权限

@@ -1,4 +1,4 @@
-import { menu } from "@/constant/menu";
+import { menu } from "../constant/menu";
 import UserService from "./userService";
 
 export class MenuService {
