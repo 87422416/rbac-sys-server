@@ -12,7 +12,7 @@
     "prod": "npm-run-all -s build cp:swagger-output cp:rbac-conf start:prod"
   },
   "author": "kattle",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "description": "rbac系统服务端",
   "devDependencies": {
     "@types/express": "^5.0.0",
