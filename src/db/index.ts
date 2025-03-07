@@ -2,7 +2,6 @@ import { Sequelize } from "@sequelize/core";
 import config from "../config";
 import models from "../models/index";
 import { MySqlDialect } from "@sequelize/mysql";
-// import event from "../utils/eventEmitter";
 
 const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT } = config;
 
@@ -26,7 +25,6 @@ export async function initDB() {
     console.log("数据库连接成功");
     await sequelize.sync({ force: true });
     console.log("数据库表同步成功");
-    // event.emit("dbReady");
   } catch (error) {
     if (error instanceof Error) {
       console.error("数据库连接失败", error.message);

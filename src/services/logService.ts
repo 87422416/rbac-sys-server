@@ -1,57 +1,63 @@
-import config from "../config";
+import dayjs from "dayjs";
 import User from "../models/user";
 import bcrypt from "bcrypt";
-import dayjs from "dayjs";
-import jwt from "jsonwebtoken";
+import config from "src/config";
 
-const { JWT_SECRET_KEY, JWT_OPTIONS } = config;
+const { ADMIN_MAX_LOGIN_ATTEMPT, ADMIN_LOCK_TIME } = config;
 
 export default class LogService {
-  static async login(
-    username: string,
-    password: string,
-    info: { lastLoginIp?: string }
-  ): Promise<string> {
+  static async login(username: string, password: string): Promise<User> {
     const user = await User.findOne({ where: { username } });
+
     if (!user) {
       throw new Error("账号错误");
     }
 
     // 验证账号状态
     if (user.status === "locked") {
-      throw new Error("账号已被封禁");
+      if (dayjs(user.unlockTime).isBefore(dayjs())) {
+        user.unlockTime = null;
+        user.status = "inactive";
+        user.failedLoginAttempts = 0;
+        await user.save();
+      } else {
+        throw new Error(
+          `账号已被封禁，请在${dayjs(user.unlockTime).format(
+            "YYYY-MM-DD HH:mm:ss"
+          )}后尝试`
+        );
+      }
+    }
+
+    // 判断是否超过最大尝试次数
+    // @ts-ignore
+    if (user.failedLoginAttempts >= ADMIN_MAX_LOGIN_ATTEMPT) {
+      const unlockTime = dayjs()
+        .add(ADMIN_LOCK_TIME / 1000, "seconds")
+        .toDate();
+
+      await User.update(
+        { unlockTime, status: "locked" },
+        { where: { username } }
+      );
+
+      throw new Error(
+        `登录次数过多，请在${dayjs(unlockTime).format(
+          "YYYY-MM-DD HH:mm:ss"
+        )}后尝试`
+      );
     }
 
     // 验证密码
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      await User.increment("failedLoginAttempts", {
+        where: { username },
+      });
+
       throw new Error("密码错误");
     }
 
-    // 生成token
-    const token = jwt.sign(
-      {
-        userId: user.id,
-      },
-      JWT_SECRET_KEY,
-      JWT_OPTIONS
-    );
-
-    try {
-      // 更新账号信息
-      await this.updateUserInfo(user.id as number, {
-        lastLoginTime: dayjs().locale("zh-cn").toDate(),
-        lastLoginIp: info.lastLoginIp,
-        status: "active",
-      });
-    } catch (error) {
-      throw error;
-    }
-
-    return token;
-  }
-
-  static async updateUserInfo(id: number, userInfo: Partial<User>) {
-    return User.update(userInfo, { where: { id } });
+    return user;
   }
 }

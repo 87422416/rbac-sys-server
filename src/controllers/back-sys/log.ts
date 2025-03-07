@@ -1,7 +1,12 @@
+import dayjs from "dayjs";
 import User from "../../models/user";
 import LogService from "../../services/logService";
 import { getErrorMessage, resBodyBuilder } from "../../utils";
 import { NextFunction, Request, Response } from "express";
+import config from "src/config";
+import jwt from "jsonwebtoken";
+
+const { JWT_SECRET_KEY, JWT_OPTIONS } = config;
 
 export const login = async (
   req: Request,
@@ -12,31 +17,32 @@ export const login = async (
   try {
     const { username, password } = req.body;
 
-    const loginSuccess = await LogService.login(username, password, {
-      lastLoginIp: req.ip,
-    });
+    const user = await LogService.login(username, password);
 
-    res.setHeader("Authorization", loginSuccess);
+    // 生成token
+    const token = jwt.sign(
+      {
+        userId: user.id,
+      },
+      JWT_SECRET_KEY,
+      JWT_OPTIONS
+    );
+
+    // 更新账号信息
+    await User.update(
+      {
+        lastLoginTime: dayjs().locale("zh-cn").toDate(),
+        lastLoginIp: req.ip,
+        status: "active",
+      },
+      { where: { username } }
+    );
+
+    res.setHeader("Authorization", token);
 
     res.send(resBodyBuilder(null, "登录成功"));
   } catch (error) {
     let msg = getErrorMessage(error) || "登录失败";
-
-    try {
-      if (msg === "密码错误") {
-        await User.increment("failedLoginAttempts", {
-          where: {
-            username: req.body.username,
-          },
-        });
-
-        msg = "账号密码错误";
-      } else if (msg === "账号错误") {
-        msg = "账号密码错误";
-      }
-    } catch (error) {
-      msg = "登录失败";
-    }
 
     next(new Error(msg));
   }

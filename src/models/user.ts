@@ -59,6 +59,7 @@ export default class User extends Model<
   declare lastLoginTime?: Date | null;
 
   @Attribute(DataTypes.INTEGER)
+  @NotNull
   @Default(0)
   @Comment("登录失败次数")
   declare failedLoginAttempts?: number;

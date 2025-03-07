@@ -6,6 +6,7 @@ import { Op } from "@sequelize/core";
 import { getRBACEnforcer } from "../rbac";
 import _ from "lodash";
 import { generateWhereOptions } from "../utils";
+import dayjs from "dayjs";
 const { CRYPT_SALT } = config;
 
 export default class UserService {
@@ -105,5 +106,35 @@ export default class UserService {
     // 获取用户角色
     const roles = await rbacEnforcer.getRolesForUser(`user::${id}`);
     return roles?.map((role) => role.split("role::")[1]);
+  }
+
+  static async handleTimeOutUnlockedUsers() {
+    const users = await User.findAll({
+      where: { unlockTime: { [Op.ne]: null } },
+    });
+
+    console.log(users, "解锁用户");
+
+    const resetFn = async (user: User) => {
+      user.unlockTime = null;
+      user.status = "inactive";
+      user.failedLoginAttempts = 0;
+      await user.save(); // 保存修改后的 user 实例
+    };
+
+    for (const user of users) {
+      const diffTime = dayjs(user.unlockTime).diff(dayjs(), "milliseconds");
+
+      if (diffTime < 0) {
+        // 如果差值小于等于 0，立即设置 unlockTime 为 null 并保存
+        await resetFn(user);
+        continue;
+      }
+      // 如果差值大于 0，使用 setTimeout 延迟设置 unlockTime 为 null
+      setTimeout(async () => {
+        await resetFn(user);
+        console.log(user.username, diffTime, "解锁");
+      }, diffTime);
+    }
   }
 }
