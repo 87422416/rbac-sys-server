@@ -9,9 +9,34 @@ import { v4 as uuidv4 } from "uuid";
 import { errorLogger } from "./logger/winston";
 import { resBodyBuilder } from "./utils";
 import passport from "passport";
-const { PORT } = config;
+import session from "express-session";
+import { redisClient } from "./db";
+import { RedisStore } from "connect-redis";
+
+const { PORT, SESSION_SECRET_KEY, COOKIE_OPTIONS } = config;
 
 const app = express();
+
+let redisStore = new RedisStore({
+  client: redisClient,
+  prefix: "rbac-sys:",
+});
+
+app.use(
+  session({
+    store: redisStore,
+    secret: SESSION_SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: COOKIE_OPTIONS.httpOnly,
+      signed: COOKIE_OPTIONS.signed,
+      sameSite: COOKIE_OPTIONS.sameSite,
+      secure: COOKIE_OPTIONS.secure,
+      maxAge: COOKIE_OPTIONS.maxAge,
+    },
+  })
+);
 
 // 初始化 passport
 app.use(passport.initialize());

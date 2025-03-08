@@ -9,9 +9,13 @@ declare global {
   }
 
   namespace Express {
+    interface Session {
+      captcha: string;
+    }
     interface Request {
       traceId?: string;
       user: JwtPayload;
+      session: Session;
     }
   }
 }

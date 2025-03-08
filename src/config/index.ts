@@ -16,12 +16,20 @@ export default {
   // 分页相关
   PAGE_SIZE: (process.env.PAGE_SIZE && parseInt(process.env.PAGE_SIZE)) || 10,
 
+  // Session
+  SESSION_SECRET_KEY: process.env.SESSION_SECRET_KEY || "ewrcsxvz",
+
   // Cookie
-  COOKIE_SECRET_KEY: process.env.COOKIE_SECRET_KEY || "ewrcsxvz",
-  COOKIE_OPTIONS: process.env.COOKIE_OPTIONS || {
-    httpOnly: true,
-    signed: true,
-    sameSite: true,
+  COOKIE_OPTIONS: {
+    httpOnly: process.env.COOKIE_OPTIONS_HTTP_ONLY === "true",
+    signed: process.env.COOKIE_OPTIONS_SIGNED === "true",
+    sameSite: process.env.COOKIE_OPTIONS_SAME_SITE === "true",
+    secure: process.env.COOKIE_OPTIONS_SECURE === "true",
+    maxAge:
+      process.env.COOKIE_OPTIONS_MAX_AGE &&
+      eval(process.env.COOKIE_OPTIONS_MAX_AGE)
+        ? eval(process.env.COOKIE_OPTIONS_MAX_AGE)
+        : 1000 * 60 * 60 * 24,
   },
 
   // jwt
@@ -44,12 +52,14 @@ export default {
   DB_HOST: process.env.DB_HOST || "localhost",
   DB_PORT: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306,
 
+  REDIS_URL: process.env.REDIS_URL || "redis://localhost:6379",
+
   // 日志相关
   //  INFO级别 日志
   LOG_INFO_FILE_NAME: process.env.LOG_INFO_FILE_NAME || "app-info-%DATE%.log",
   LOG_INFO_DATE_PATTERN: process.env.LOG_INFO_DATE_PATTERN || "YYYY-MM-DD",
   LOG_INFO_DIRNAME: process.env.LOG_INFO_DIRNAME || "logs/info",
-  LOG_INFO_ZIPPED_ARCHIVE: !!process.env.LOG_INFO_ZIPPED_ARCHIVE || true,
+  LOG_INFO_ZIPPED_ARCHIVE: process.env.LOG_INFO_ZIPPED_ARCHIVE === "true",
   LOG_INFO_MAX_FILES: process.env.LOG_INFO_MAX_FILES || "90d",
 
   //  ERROR级别 日志
@@ -57,6 +67,6 @@ export default {
     process.env.LOG_ERROR_FILE_NAME || "app-error-%DATE%.log",
   LOG_ERROR_DATE_PATTERN: process.env.LOG_ERROR_DATE_PATTERN || "YYYY-MM-DD",
   LOG_ERROR_DIRNAME: process.env.LOG_ERROR_DIRNAME || "logs/error",
-  LOG_ERROR_ZIPPED_ARCHIVE: !!process.env.LOG_ERROR_ZIPPED_ARCHIVE || true,
+  LOG_ERROR_ZIPPED_ARCHIVE: process.env.LOG_ERROR_ZIPPED_ARCHIVE === "true",
   LOG_ERROR_MAX_FILES: process.env.LOG_ERROR_MAX_FILES || "90d",
 };

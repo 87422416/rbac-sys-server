@@ -2,6 +2,7 @@ import { Sequelize } from "@sequelize/core";
 import config from "../config";
 import models from "../models/index";
 import { MySqlDialect } from "@sequelize/mysql";
+import { createClient } from "redis";
 
 const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT } = config;
 
@@ -19,17 +20,20 @@ export const sequelize = new Sequelize({
   },
 });
 
+export const redisClient = createClient({ url: config.REDIS_URL });
+
 export async function initDB() {
-  try {
-    await sequelize.authenticate();
-    console.log("数据库连接成功");
-    await sequelize.sync({ force: true });
-    console.log("数据库表同步成功");
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error("数据库连接失败", error.message);
-    } else {
-      console.error("数据库连接失败", error);
-    }
-  }
+  await sequelize.authenticate().catch((err) => {
+    console.error("数据库连接失败", err);
+  });
+  console.log("数据库连接成功");
+  await sequelize.sync({ force: true }).catch((err) => {
+    console.error("数据库表同步失败", err);
+  });
+  console.log("数据库表同步成功");
+
+  await redisClient.connect().catch((err) => {
+    console.error("Redis 连接失败", err);
+  });
+  console.log("Redis 连接成功");
 }

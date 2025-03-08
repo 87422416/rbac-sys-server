@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import User from "../models/user";
 import bcrypt from "bcrypt";
-import config from "src/config";
+import config from "../config";
 
 const { ADMIN_MAX_LOGIN_ATTEMPT, ADMIN_LOCK_TIME } = config;
 
