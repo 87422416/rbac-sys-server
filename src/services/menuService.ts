@@ -1,4 +1,5 @@
 import { menu } from "../constant/menu";
+import { rebuildTree } from "../utils";
 import UserService from "./userService";
 
 export class MenuService {
@@ -13,6 +14,6 @@ export class MenuService {
       throw new Error("用户不存在");
     }
 
-    return user.menu;
+    return rebuildTree(menu, JSON.parse(user.menu));
   }
 }

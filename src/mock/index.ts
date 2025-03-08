@@ -42,8 +42,7 @@ export default async function mock() {
   await mockUser({
     username: "kattle",
     password: "kattle",
-    menu:
-      '[{"key":"/user","title":"用户管理","value":"/user"},{"key":"/role","title":"角色管理","value":"/role"},{"key":"/permission","title":"权限管理","value":"/permission"},{"key":"/menu","title":"菜单管理","value":"/menu"}]',
+    menu: '["/user", "/role", "/permission", "/menu"]',
   });
 
   // 清空casbin_rule

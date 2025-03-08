@@ -99,3 +99,43 @@ export const generateWhereOptions = <T extends Model>(
     (value) => !_.isUndefined(value)
   ) as WhereOptions<InferAttributes<T>>;
 };
+
+/**
+ * 使用lodash重建树结构
+ * @param nodes 树节点
+ * @param targetValues 目标值
+ * @returns 重建后的树结构
+ */
+export const rebuildTree = (nodes: any[], targetValues: any[]) => {
+  // 递归处理节点
+  const processNode = (node: any) => {
+    // 深拷贝节点，防止污染原数据
+    const clonedNode = _.cloneDeep(node);
+
+    // 递归处理子节点（如果存在）
+    if (_.has(clonedNode, "children")) {
+      const processedChildren = _.chain(clonedNode.children)
+        .map(processNode)
+        .filter((child) => !_.isEmpty(child))
+        .value();
+
+      clonedNode.children =
+        processedChildren.length > 0 ? processedChildren : undefined;
+      if (_.isEmpty(clonedNode.children)) delete clonedNode.children;
+    }
+
+    // 判断节点是否保留：
+    // 1. 自身 value 在目标数组中
+    // 2. 子节点处理后非空
+    const isSelfMatched = _.includes(targetValues, clonedNode.value);
+    const hasValidChildren = !_.isEmpty(clonedNode?.children);
+
+    return isSelfMatched || hasValidChildren ? clonedNode : undefined;
+  };
+
+  // 从根节点开始处理
+  return _.chain(nodes)
+    .map(processNode)
+    .filter((node) => !_.isUndefined(node))
+    .value();
+};
