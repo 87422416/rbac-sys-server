@@ -70,3 +70,21 @@ export const captcha = async (
     next(new Error(msg));
   }
 };
+
+export const whoami = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // #swagger.tags = ['log']
+  try {
+    const { userId } = req.user;
+
+    const data = await LogService.whoami(userId);
+
+    res.send(resBodyBuilder(data, "获取用户信息成功"));
+  } catch (error) {
+    let msg = getErrorMessage(error) || "获取用户信息失败";
+    next(new Error(msg));
+  }
+};

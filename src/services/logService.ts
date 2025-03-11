@@ -2,6 +2,9 @@ import dayjs from "dayjs";
 import User from "../models/user";
 import bcrypt from "bcrypt";
 import config from "../config";
+import { rebuildTree } from "../utils";
+import { menu as menuOrigin } from "../constant/menu";
+import { getRBACEnforcer } from "../rbac";
 
 const { ADMIN_MAX_LOGIN_ATTEMPT, ADMIN_LOCK_TIME } = config;
 
@@ -59,5 +62,32 @@ export default class LogService {
     }
 
     return user;
+  }
+
+  static async whoami(userId: string) {
+    const user = await User.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new Error("用户不存在");
+    }
+
+    const rbacEnforcer = getRBACEnforcer();
+    // 重新加载策略
+    await rbacEnforcer.loadPolicy();
+
+    const permissions =
+      (
+        await rbacEnforcer.getImplicitPermissionsForUser(`user::${user.id}`)
+      ).map((item) => `${item[1].split("::")[1]}::${item[2].split("::")[1]}`) ||
+      [];
+
+    const menu = rebuildTree(menuOrigin, JSON.parse(user?.menu || "[]"));
+
+    return {
+      username: user?.username,
+      avatar: user?.avatar,
+      menu,
+      permissions,
+    };
   }
 }

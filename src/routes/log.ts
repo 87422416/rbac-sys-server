@@ -1,8 +1,10 @@
-import { capcha, login } from "../controllers/back-sys/log";
+import { captcha, login } from "../controllers/back-sys/log";
 import router from "./router";
 import Joi from "joi";
 import validateInput from "../middlewares/validateInput";
-import validateCapcha from "../middlewares/validateCapcha";
+import validateCaptcha from "../middlewares/validateCaptcha";
+import validateToken from "../middlewares/validateToken";
+import { whoami } from "../controllers/back-sys/log";
 interface LoginBody {
   username: string;
   password: string;
@@ -17,4 +19,4 @@ router.post("/login", validateInput(loginSchema), validateCaptcha, login);
 
 router.get("/captcha", captcha);
 
-router.get("/capcha", capcha);
+router.get("/whoami", validateToken, whoami);
