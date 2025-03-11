@@ -32,7 +32,6 @@ export const redisClient = createClient({
   url: config.REDIS_URL,
   username: REDIS_USERNAME,
   password: REDIS_PASSWORD, // 如果设置了密码
-  legacyMode: true, // 兼容旧版模式
 });
 
 export async function initDB() {
