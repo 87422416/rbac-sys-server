@@ -4,7 +4,15 @@ import models from "../models/index";
 import { MySqlDialect } from "@sequelize/mysql";
 import { createClient } from "redis";
 
-const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT } = config;
+const {
+  DB_NAME,
+  DB_USERNAME,
+  DB_PASSWORD,
+  DB_HOST,
+  DB_PORT,
+  REDIS_PASSWORD,
+  REDIS_USERNAME,
+} = config;
 
 export const sequelize = new Sequelize({
   dialect: MySqlDialect,
@@ -20,7 +28,12 @@ export const sequelize = new Sequelize({
   },
 });
 
-export const redisClient = createClient({ url: config.REDIS_URL });
+export const redisClient = createClient({
+  url: config.REDIS_URL,
+  username: REDIS_USERNAME,
+  password: REDIS_PASSWORD, // 如果设置了密码
+  legacyMode: true, // 兼容旧版模式
+});
 
 export async function initDB() {
   await sequelize.authenticate().catch((err) => {

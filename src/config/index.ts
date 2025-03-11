@@ -53,6 +53,8 @@ export default {
   DB_PORT: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306,
 
   REDIS_URL: process.env.REDIS_URL || "redis://localhost:6379",
+  REDIS_USERNAME: process.env.REDIS_USERNAME || "",
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD || "",
 
   // 日志相关
   //  INFO级别 日志
