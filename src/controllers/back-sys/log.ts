@@ -39,9 +39,7 @@ export const login = async (
       { where: { username } }
     );
 
-    res.setHeader("Authorization", token);
-
-    res.send(resBodyBuilder(null, "登录成功"));
+    res.send(resBodyBuilder(token, "登录成功"));
   } catch (error) {
     let msg = getErrorMessage(error) || "登录失败";
 
@@ -49,21 +47,24 @@ export const login = async (
   }
 };
 
-export const capcha = async (
+export const captcha = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   // #swagger.tags = ['log']
   try {
-    const capcha = svgCaptcha.create();
-    req.session.captcha = capcha.text;
+    const captcha = svgCaptcha.create({
+      height: 32,
+      fontSize: 38,
+    });
+    req.session.captcha = captcha.text;
 
     if (process.env.NODE_ENV === "development") {
-      console.log("capcha", capcha.text);
+      console.log("captcha", captcha.text);
     }
 
-    res.send(resBodyBuilder(capcha.data, "验证码生成成功"));
+    res.send(resBodyBuilder(captcha.data, "验证码生成成功"));
   } catch (error) {
     let msg = getErrorMessage(error) || "验证码生成失败";
     next(new Error(msg));

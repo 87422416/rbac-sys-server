@@ -17,9 +17,10 @@ const { PAGE_SIZE } = config;
 export function resBodyBuilder(
   data: ResBody["data"],
   msg: ResBody["msg"],
-  code: ResBody["code"] = 0
+  code: ResBody["code"] = 0,
+  traceId?: string
 ): ResBody {
-  return { code, msg, data };
+  return { code, msg, data, traceId: traceId || undefined };
 }
 
 /**

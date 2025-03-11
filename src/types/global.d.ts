@@ -23,6 +23,7 @@ export interface ResBody {
   code: ResCode;
   data: any;
   msg: string | string[];
+  traceId?: string;
 }
 
 export {};

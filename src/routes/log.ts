@@ -13,6 +13,8 @@ const loginSchema = Joi.object<LoginBody>({
   password: Joi.string().required().min(6).max(20).label("密码长度为6-20"),
   captcha: Joi.string().required().label("验证码必填"),
 });
-router.post("/login", validateInput(loginSchema), validateCapcha, login);
+router.post("/login", validateInput(loginSchema), validateCaptcha, login);
+
+router.get("/captcha", captcha);
 
 router.get("/capcha", capcha);

@@ -70,7 +70,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   const errorMsg =
     process.env.NODE_ENV === "development" ? err.message : "服务端错误";
 
-  res.status(500).json(resBodyBuilder(null, errorMsg, -1));
+  res.send(resBodyBuilder(null, errorMsg, -1, req.traceId));
 });
 
 export function startServer() {
