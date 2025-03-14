@@ -26,35 +26,37 @@ interface RoleManager {
 export interface RoleTreeNode {
   title: string;
   value: string;
-  children: RoleTreeNode[];
+  children?: RoleTreeNode[];
 }
 
 export async function buildRoleInheritanceTreeById(
   roleManager: RoleManager,
-  roleId: string
+  role: string,
+  value: string
 ): Promise<RoleTreeNode> {
   const node: RoleTreeNode = {
-    title: roleId,
-    value: roleId,
-    children: [],
+    title: role,
+    value: value,
   };
 
   // 获取该角色直接继承的所有角色
-  const childRoles = await roleManager.getRoles(`role::${roleId}`);
+  const childRoles = await roleManager.getRoles(`role::${role}`);
 
-  // 递归构建子树
-  for (const childRole of childRoles) {
+  childRoles.forEach(async (childRole) => {
     // 从 "role::123" 格式中提取ID
-    const childId = childRole.split("::")[1];
-    if (childId !== roleId) {
+    const childLable = childRole.split("::")[1];
+    if (childLable !== role) {
       // 避免自引用
       const childNode = await buildRoleInheritanceTreeById(
         roleManager,
-        childId
+        childLable,
+        `${role}-${childLable}`
       );
+
+      node.children = node.children || [];
       node.children.push(childNode);
     }
-  }
+  });
 
   return node;
 }

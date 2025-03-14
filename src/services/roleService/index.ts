@@ -52,30 +52,36 @@ export class RoleService {
   }
 
   // 分配角色给用户
-  static async assignRoleToUser(userId: number, role: string) {
-    const user = await UserService.getUserById(userId);
-    if (!user) {
-      throw new Error("用户不存在");
-    }
-    const roleInstance = await Role.findOne<Role>({ where: { label: role } });
-    if (!roleInstance) {
+  static async assignRolesToUser(userId: number, roles: string[]) {
+    const rolesInstance = await Role.findAll<Role>({
+      where: { label: { [Op.in]: roles } },
+    });
+
+    if (rolesInstance.length !== roles.length) {
       throw new Error("角色不存在");
     }
 
     const rbacEnforcer = getRBACEnforcer();
     // 重新加载策略
     await rbacEnforcer.loadPolicy();
+
+    // 删除旧角色
+    await rbacEnforcer.deleteRolesForUser(`user::${userId.toString()}`);
+
     // 添加角色
-    const addRes = await rbacEnforcer.addRoleForUser(
-      `user::${userId.toString()}`,
-      `role::${role.toString()}`
+    await Promise.all(
+      roles.map((role) => {
+        return rbacEnforcer.addRoleForUser(
+          `user::${userId.toString()}`,
+          `role::${role}`
+        );
+      })
     );
-    if (!addRes) {
-      throw new Error("分配角色失败");
-    }
+
     // 保存策略
     await rbacEnforcer.savePolicy();
   }
+
   // 撤销用户的角色
   static async revokeRoleFromUser(userId: number, role: string) {
     const roleInstance = await Role.findOne<Role>({ where: { label: role } });
@@ -151,7 +157,7 @@ export class RoleService {
 
     const roleInheritanceTree = await Promise.all(
       roles.map((role) =>
-        buildRoleInheritanceTreeById(enforcer.getRoleManager(), role)
+        buildRoleInheritanceTreeById(enforcer.getRoleManager(), role, role)
       )
     );
     return roleInheritanceTree;

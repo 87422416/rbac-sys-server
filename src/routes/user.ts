@@ -7,7 +7,7 @@ import {
   updateUser,
 } from "../controllers/back-sys/user";
 import router from "./router";
-import validateInput from "../middlewares/validateInput";  
+import validateInput from "../middlewares/validateInput";
 import Joi from "joi";
 import validateToken from "../middlewares/validateToken";
 import { getIdObjectSchema, getIdsObjectSchema } from "../utils";
@@ -20,6 +20,9 @@ interface UserBody {
   phone?: string;
   avatar?: string;
   status?: string;
+  unlockTime?: number;
+  menu?: string[];
+  roles?: string[];
 }
 interface CreateUserBody extends UserBody {
   confirmPassword: string;
@@ -68,6 +71,9 @@ const PutUserObjectSchema = Joi.object<UserBody>({
     .optional()
     .valid("active", "inactive", "locked")
     .label("状态不正确"),
+  unlockTime: Joi.date().optional().label("解锁时间格式不正确"),
+  menu: Joi.array().optional().label("菜单格式不正确"),
+  roles: Joi.array().optional().label("角色格式不正确"),
 });
 router.put(
   "/user/:id",

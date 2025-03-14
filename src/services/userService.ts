@@ -7,6 +7,8 @@ import { getRBACEnforcer } from "../rbac";
 import _ from "lodash";
 import { generateWhereOptions } from "../utils";
 import dayjs from "dayjs";
+import { sequelize } from "src/db";
+import { RoleService } from "./roleService";
 const { CRYPT_SALT } = config;
 
 export default class UserService {
@@ -28,27 +30,59 @@ export default class UserService {
   ) {
     const offset = (page - 1) * pageSize;
 
-    let options = generateWhereOptions(whereOptions, (obj) => ({
-      ...obj,
-      username: obj.username ? { [Op.like]: `%${obj.username}%` } : undefined,
-      email: obj.email ? { [Op.like]: `%${obj.email}%` } : undefined,
-      phone: obj.phone ? { [Op.like]: `%${obj.phone}%` } : undefined,
-      ...(obj.createdAtStart &&
-        obj.createdAtEnd && {
-          createdAt: {
-            [Op.between]: [obj.createdAtStart, obj.createdAtEnd],
-          },
-        }),
-      ...(obj.updatedAtStart &&
-        obj.updatedAtEnd && {
-          updatedAt: {
-            [Op.between]: [obj.updatedAtStart, obj.updatedAtEnd],
-          },
-        }),
-    }));
+    let options = generateWhereOptions(
+      whereOptions,
+      (obj) => ({
+        ...obj,
+        username: obj.username ? { [Op.like]: `%${obj.username}%` } : undefined,
+        email: obj.email ? { [Op.like]: `%${obj.email}%` } : undefined,
+        phone: obj.phone ? { [Op.like]: `%${obj.phone}%` } : undefined,
+        failedLoginAttempts: obj.failedLoginAttempts
+          ? { [Op.gte]: obj.failedLoginAttempts }
+          : undefined,
+        ...(obj.unlockTimeStart &&
+          obj.unlockTimeEnd && {
+            unlockTime: {
+              [Op.gte]: obj.unlockTimeStart,
+              [Op.lt]: dayjs(obj.unlockTimeEnd).endOf("day").toDate(),
+            },
+          }),
+        ...(obj.lastLoginTimeStart &&
+          obj.lastLoginTimeEnd && {
+            lastLoginTime: {
+              [Op.gte]: obj.lastLoginTimeStart,
+              [Op.lt]: dayjs(obj.lastLoginTimeEnd).endOf("day").toDate(),
+            },
+          }),
+        ...(obj.createdAtStart &&
+          obj.createdAtEnd && {
+            createdAt: {
+              [Op.gte]: obj.createdAtStart,
+              [Op.lt]: dayjs(obj.createdAtEnd).endOf("day").toDate(),
+            },
+          }),
+        ...(obj.updatedAtStart &&
+          obj.updatedAtEnd && {
+            updatedAt: {
+              [Op.gte]: obj.updatedAtStart,
+              [Op.lt]: dayjs(obj.updatedAtEnd).endOf("day").toDate(),
+            },
+          }),
+      }),
+      [
+        "lastLoginTimeStart" as never,
+        "lastLoginTimeEnd" as never,
+        "unlockTimeStart" as never,
+        "unlockTimeEnd" as never,
+        "createdAtStart" as never,
+        "createdAtEnd" as never,
+        "updatedAtStart" as never,
+        "updatedAtEnd" as never,
+      ]
+    );
 
     return User.findAndCountAll({
-      attributes: { exclude: ["password", "failedLoginAttempts"] },
+      attributes: { exclude: ["password"] },
       offset,
       limit: pageSize,
       where: options,
@@ -74,14 +108,31 @@ export default class UserService {
     };
   }
 
-  static async updateUser(id: number, user: Partial<InferAttributes<User>>) {
+  static async updateUser(
+    id: number,
+    user: Partial<InferAttributes<User>> & {
+      menu?: string[];
+      roles?: string[];
+    }
+  ) {
     const salt = await bcrypt.genSalt(CRYPT_SALT);
     if (user.password) {
       user.password = await bcrypt.hash(user.password, salt);
     }
 
-    return User.update(user, {
-      where: { id },
+    await sequelize.transaction(async () => {
+      // 更新用户角色
+      await RoleService.assignRolesToUser(id, user.roles || []);
+
+      await User.update(
+        {
+          ...user,
+          menu: JSON.stringify(user.menu),
+        },
+        {
+          where: { id },
+        }
+      );
     });
   }
 

@@ -14,8 +14,8 @@ export const mockUser = async (user: InferAttributes<User>) => {
   UserService.createUser(user);
 };
 
-export const mockRoleAssign = async (userId: number, role: string) => {
-  await RoleService.assignRoleToUser(userId, role);
+export const mockRoleAssign = async (userId: number, roles: string[]) => {
+  await RoleService.assignRolesToUser(userId, roles);
 };
 
 export const mockRolePermission = async (role: string) => {
@@ -40,10 +40,18 @@ export const mockRoleInheritance = async (role: string, parentRole: string) => {
 export default async function mock() {
   // 初始化账号
   await mockUser({
-    username: "kattle",
-    password: "kattle",
-    menu: '["/user", "/role", "/permission", "/menu"]',
+    username: `kattle`,
+    password: `kattle`,
+    menu: JSON.stringify(["/user", "/role", "/permission", "/menu"]),
   });
+
+  for (let i = 0; i < 10; i++) {
+    await mockUser({
+      username: `kattle${i}`,
+      password: `kattle${i}`,
+      menu: JSON.stringify(["/user", "/role", "/permission", "/menu"]),
+    });
+  }
 
   // 清空casbin_rule
   await sequelize.query("DELETE FROM casbin_rule");
@@ -95,5 +103,5 @@ export default async function mock() {
   ]);
 
   // 分配角色给账号
-  await mockRoleAssign(1, "超级管理员");
+  await mockRoleAssign(1, ["超级管理员"]);
 }

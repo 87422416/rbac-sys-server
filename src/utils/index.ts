@@ -91,13 +91,15 @@ export const generateWhereOptions = <T extends Model>(
   options: InferAttributes<T> & Record<string, any>,
   whereOptionsHandler: (
     obj: InferAttributes<T> & Record<string, any>
-  ) => WhereOptions<InferAttributes<T>>
+  ) => WhereOptions<InferAttributes<T>>,
+  removeFields: (keyof InferAttributes<T> & Record<string, any>)[] = []
 ) => {
   const whereOptions = whereOptionsHandler(options);
 
   return _.pickBy(
     whereOptions as Record<string, any>,
-    (value) => !_.isUndefined(value)
+    (value, key: keyof InferAttributes<T> & Record<string, any>) =>
+      !_.isUndefined(value) && !_.includes(removeFields, key)
   ) as WhereOptions<InferAttributes<T>>;
 };
 

@@ -1,5 +1,9 @@
 import UserService from "../../services/userService";
-import { getErrorMessage, getValidPageAndSize, resBodyBuilder } from "../../utils";
+import {
+  getErrorMessage,
+  getValidPageAndSize,
+  resBodyBuilder,
+} from "../../utils";
 import { Request, Response, NextFunction } from "express";
 import { InferAttributes } from "@sequelize/core";
 import User from "../../models/user";
@@ -50,10 +54,12 @@ export const getUsersByPage = async (
       email,
       phone,
       status,
-      lastLoginTime,
+      lastLoginTimeStart,
+      lastLoginTimeEnd,
       lastLoginIp,
       failedLoginAttempts,
-      unlockTime,
+      unlockTimeStart,
+      unlockTimeEnd,
       createdAtStart,
       createdAtEnd,
       updatedAtStart,
@@ -70,10 +76,12 @@ export const getUsersByPage = async (
       email,
       phone,
       status,
-      lastLoginTime,
+      lastLoginTimeStart,
+      lastLoginTimeEnd,
       lastLoginIp,
       failedLoginAttempts,
-      unlockTime,
+      unlockTimeStart,
+      unlockTimeEnd,
       createdAtStart,
       createdAtEnd,
       updatedAtStart,
@@ -121,19 +129,24 @@ export const updateUser = async (
       phone,
       avatar,
       status,
-    } = req.body as InferAttributes<User>;
+      unlockTime,
+      menu,
+      roles,
+    } = req.body as InferAttributes<User> & {
+      menu?: string[];
+      roles?: string[];
+    };
 
-    const counts = await UserService.updateUser(+id, {
+    await UserService.updateUser(+id, {
       password,
       email,
       phone,
       avatar,
       status,
+      unlockTime,
+      menu,
+      roles,
     });
-
-    if (counts[0] === 0) {
-      throw new Error("更新用户失败");
-    }
 
     res.send(resBodyBuilder(null, "更新用户成功"));
   } catch (error) {

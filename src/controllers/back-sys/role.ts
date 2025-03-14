@@ -104,7 +104,7 @@ export const assignRoleToUser = async (
   try {
     const { userId, role } = req.body;
 
-    await RoleService.assignRoleToUser(userId, role);
+    await RoleService.assignRolesToUser(userId, role);
 
     res.send(resBodyBuilder(null, "分配角色成功"));
   } catch (error) {
