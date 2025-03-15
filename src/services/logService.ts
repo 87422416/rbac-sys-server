@@ -24,11 +24,14 @@ export default class LogService {
         user.failedLoginAttempts = 0;
         await user.save();
       } else {
-        throw new Error(
-          `账号已被封禁，请在${dayjs(user.unlockTime).format(
-            "YYYY-MM-DD HH:mm:ss"
-          )}后尝试`
-        );
+        if (user.unlockTime)
+          throw new Error(
+            `账号已被封禁，请在${dayjs(user.unlockTime).format(
+              "YYYY-MM-DD HH:mm:ss"
+            )}后尝试`
+          );
+
+        throw new Error(`账号已被封禁，请联系超级管理员解封`);
       }
     }
 
