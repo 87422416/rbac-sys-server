@@ -6,6 +6,7 @@ import { NextFunction, Request, Response } from "express";
 import config from "../../config";
 import jwt from "jsonwebtoken";
 import svgCaptcha from "svg-captcha";
+import UserService from "../../services/userService";
 
 const { JWT_SECRET_KEY, JWT_OPTIONS } = config;
 
@@ -38,6 +39,11 @@ export const login = async (
       },
       { where: { username } }
     );
+
+    // 获取用户角色
+    const roles = await UserService.getUserRoles(user.id as number);
+
+    req.session.roles = roles;
 
     res.send(resBodyBuilder(token, "登录成功"));
   } catch (error) {

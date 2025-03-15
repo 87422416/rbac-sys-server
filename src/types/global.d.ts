@@ -5,12 +5,12 @@ declare global {
 
   interface JWTPayload {
     userId: number;
-    roles: string[];
   }
 
   namespace Express {
     interface Session {
       captcha: string;
+      roles: string[];
     }
     interface Request {
       traceId?: string;

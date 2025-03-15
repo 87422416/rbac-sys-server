@@ -9,12 +9,12 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 
   const user = req.user;
 
-  if (!user || !user.roles) {
+  if (!user || !req.session.roles) {
     next(new Error("权限不足"));
     return;
   }
 
-  const roles = user.roles;
+  const roles = req.session.roles;
 
   method = method.toLowerCase();
 

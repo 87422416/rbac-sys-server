@@ -21,10 +21,8 @@ passport.use(
 
     if (user && user.status !== "locked") {
       // 获取用户信息
-      // @ts-ignore
-      const roles = await UserService.getUserRoles(user.id);
 
-      return done(null, { userId: user.id, roles }); // 用户存在，返回用户信息
+      return done(null, { userId: user.id }); // 用户存在，返回用户信息
     } else {
       return done(null, false); // 用户不存在，返回 false
     }
