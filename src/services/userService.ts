@@ -7,17 +7,30 @@ import { getRBACEnforcer } from "../rbac";
 import _ from "lodash";
 import { generateWhereOptions } from "../utils";
 import dayjs from "dayjs";
-import { sequelize } from "src/db";
+import { sequelize } from "../db";
 import { RoleService } from "./roleService";
 const { CRYPT_SALT } = config;
 
 export default class UserService {
-  static async createUser(user: InferAttributes<User>) {
+  static async createUser(user: InferAttributes<User> & { roles?: string[] }) {
+    const existUser = await User.findOne({
+      where: { username: user.username },
+    });
+
+    if (existUser) {
+      throw new Error("用户已存在");
+    }
+    
     const salt = await bcrypt.genSalt(CRYPT_SALT);
 
-    return User.create({
-      ...user,
-      password: await bcrypt.hash(user.password, salt),
+    sequelize.transaction(async () => {
+      const res = await User.create({
+        ...user,
+        menu: JSON.stringify(user.menu),
+        password: await bcrypt.hash(user.password, salt),
+      });
+      console.log("createUser", res.id, user.roles);
+      await RoleService.assignRolesToUser(res.id as number, user.roles || []);
     });
   }
 

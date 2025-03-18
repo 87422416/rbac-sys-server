@@ -7,10 +7,12 @@ import router from "../routes/router";
 import { sequelize } from "../db";
 
 export const mockRole = async (role: string) => {
-  await RoleService.createRole(role);
+  return RoleService.createRole(role);
 };
 
-export const mockUser = async (user: InferAttributes<User>) => {
+export const mockUser = async (
+  user: InferAttributes<User> & { roles?: string[] }
+) => {
   UserService.createUser(user);
 };
 
@@ -34,25 +36,10 @@ export const mockRolePermission = async (role: string) => {
 };
 
 export const mockRoleInheritance = async (role: string, parentRole: string) => {
-  await RoleService.setRoleInheritance(role, parentRole);
+  return RoleService.setRoleInheritance(role, parentRole);
 };
 
 export default async function mock() {
-  // 初始化账号
-  await mockUser({
-    username: `kattle`,
-    password: `kattle`,
-    menu: JSON.stringify(["/user", "/role", "/permission", "/menu"]),
-  });
-
-  for (let i = 0; i < 10; i++) {
-    await mockUser({
-      username: `kattle${i}`,
-      password: `kattle${i}`,
-      menu: JSON.stringify(["/user", "/role", "/permission", "/menu"]),
-    });
-  }
-
   // 清空casbin_rule
   await sequelize.query("DELETE FROM casbin_rule");
 
@@ -68,6 +55,23 @@ export default async function mock() {
   await mockRoleInheritance("角色管理员", "超级管理员");
   await mockRoleInheritance("权限管理员", "超级管理员");
   await mockRoleInheritance("菜单管理员", "超级管理员");
+
+  // 初始化账号
+  await mockUser({
+    username: `kattle`,
+    password: `kattle`,
+    menu: ["/user", "/role", "/permission", "/menu"] as unknown as string,
+    roles: ["超级管理员"],
+  });
+
+  // for (let i = 0; i < 10; i++) {
+  //   await mockUser({
+  //     username: `kattle${i}`,
+  //     password: `kattle${i}`,
+  //     menu: JSON.stringify(["/user", "/role", "/permission", "/menu"]),
+  //     roles: ["超级管理员"],
+  //   });
+  // }
 
   // 初始化角色权限
   await PermissionService.setPermissionsByRole("角色管理员", [
@@ -103,5 +107,5 @@ export default async function mock() {
   ]);
 
   // 分配角色给账号
-  await mockRoleAssign(1, ["超级管理员"]);
+  // await mockRoleAssign(1, ["超级管理员"]);
 }

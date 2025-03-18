@@ -40,6 +40,8 @@ export const CreateUserObjectSchema = Joi.object<CreateUserBody>({
     .regex(/^1[3-9]\d{9}$/)
     .label("手机号格式不正确"),
   avatar: Joi.string().optional().label("头像格式不正确"),
+  menu: Joi.array().required().label("菜单格式不正确"),
+  roles: Joi.array().required().label("角色格式不正确"),
 });
 router.post(
   "/user",

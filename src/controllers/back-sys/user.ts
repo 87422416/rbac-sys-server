@@ -23,7 +23,15 @@ export const createUser = async (
       phone,
       avatar,
       menu,
-    } = req.body as InferAttributes<User> & { confirmPassword: string };
+      roles,
+    } = req.body as InferAttributes<User> & {
+      confirmPassword: string;
+      roles: string[];
+    };
+
+    if (password !== confirmPassword) {
+      throw new Error("两次密码不一致");
+    }
 
     await UserService.createUser({
       username,
@@ -32,6 +40,7 @@ export const createUser = async (
       phone,
       avatar,
       menu,
+      roles,
     });
 
     res.send(resBodyBuilder(null, "创建用户成功"));
