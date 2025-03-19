@@ -51,7 +51,7 @@ export async function buildRoleInheritanceTreeById(
       return await buildRoleInheritanceTreeById(
         roleManager,
         childLable,
-        `${role}-${childLable}`
+        `${value}-${childLable}`
       );
     }
     return null;
