@@ -3,10 +3,10 @@ import {
   deleteRole,
   getRoles,
   assignRoleToUser,
-  revokeRoleFromUser,
   getUsersIdByRole,
   setRoleInheritance,
   getRolesInheritanceTree,
+  deleteRoleInheritance,
 } from "../controllers/back-sys/role";
 import router from "./router";
 import validate from "../middlewares/validateInput";
@@ -62,22 +62,22 @@ router.post(
   }
 );
 
-router.put(
-  "/role/revoke",
+router.delete(
+  "/role/inheritance",
   validateToken,
   validateInput(
     Joi.object({
-      userId: Joi.number().required(),
       role: Joi.string().required(),
+      parentRole: Joi.string().required(),
     }),
     "body"
   ),
   validatePermission,
   (req, res, next) => {
     // #swagger.tags = ['role']
-    const { role, userId } = req.body; // swagger bug
+    const { role, parentRole } = req.body; // swagger bug
 
-    revokeRoleFromUser(req, res, next);
+    deleteRoleInheritance(req, res, next);
   }
 );
 

@@ -78,6 +78,7 @@ export default async function mock() {
     ["/roles/inheritance", "get"],
     ["/role", "post"],
     ["/role/inheritance", "post"],
+    ["/role/inheritance", "delete"],
     ["/role/revoke", "put"],
     ["/role/:role", "delete"],
     ["/roles", "get"],

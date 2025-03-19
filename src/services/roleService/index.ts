@@ -34,7 +34,7 @@ export class RoleService {
     await rbacEnforcer.removeFilteredPolicy(0, `role::${role}`); // 0 表示第一列是角色，删除所有与该角色相关的策略
 
     // 删除角色的记录
-    const res = await Role.destroy({ where: { label: role } });
+    const res = await Role.destroy({ where: { label: role }, force: true });
 
     if (res === 0) {
       throw new Error(`删除角色失败`);
@@ -82,27 +82,6 @@ export class RoleService {
     await rbacEnforcer.savePolicy();
   }
 
-  // 撤销用户的角色
-  static async revokeRoleFromUser(userId: number, role: string) {
-    const roleInstance = await Role.findOne<Role>({ where: { label: role } });
-    if (!roleInstance) {
-      throw new Error("角色不存在");
-    }
-
-    const rbacEnforcer = getRBACEnforcer();
-    // 重新加载策略
-    await rbacEnforcer.loadPolicy();
-    // 删除角色
-    const res = await rbacEnforcer.deleteRoleForUser(
-      `user::${userId.toString()}`,
-      `role::${role.toString()}`
-    );
-    if (!res) {
-      throw new Error("撤销角色失败");
-    }
-    // 保存策略
-    await rbacEnforcer.savePolicy();
-  }
   // 查看角色的用户列表
   static async getUsersIdByRole(role: string) {
     const roleInstance = await Role.findOne<Role>({ where: { label: role } });
@@ -135,6 +114,23 @@ export class RoleService {
 
     if (!res) {
       throw new Error("角色继承失败");
+    }
+    // 保存策略
+    await enforcer.savePolicy();
+  }
+
+  // 删除角色继承
+  static async deleteRoleInheritance(role: string, parentRole: string) {
+    const enforcer = await getRBACEnforcer();
+    // 重新加载策略
+    await enforcer.loadPolicy();
+    const res = await enforcer.removeGroupingPolicy(
+      `role::${parentRole.toString()}`,
+      `role::${role.toString()}`
+    );
+
+    if (!res) {
+      throw new Error("删除角色继承失败");
     }
     // 保存策略
     await enforcer.savePolicy();

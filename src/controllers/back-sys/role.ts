@@ -59,24 +59,6 @@ export const getRoles = async (
   }
 };
 
-export const revokeRoleFromUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  // #swagger.tags = ['role']
-  try {
-    const { userId, role } = req.body;
-
-    await RoleService.revokeRoleFromUser(userId, role);
-
-    res.send(resBodyBuilder(null, "撤销角色成功"));
-  } catch (error) {
-    let msg = getErrorMessage(error) || "撤销角色失败";
-    next(new Error(msg));
-  }
-};
-
 export const getUsersIdByRole = async (
   req: Request,
   res: Response,
@@ -139,6 +121,24 @@ export const setRoleInheritance = async (
     res.send(resBodyBuilder(null, "设置角色继承成功"));
   } catch (error) {
     let msg = getErrorMessage(error) || "设置角色继承失败";
+    next(new Error(msg));
+  }
+};
+
+export const deleteRoleInheritance = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // #swagger.tags = ['role']
+  try {
+    const { role, parentRole } = req.body;
+
+    await RoleService.deleteRoleInheritance(role, parentRole);
+
+    res.send(resBodyBuilder(null, "删除角色继承成功"));
+  } catch (error) {
+    let msg = getErrorMessage(error) || "删除角色继承失败";
     next(new Error(msg));
   }
 };

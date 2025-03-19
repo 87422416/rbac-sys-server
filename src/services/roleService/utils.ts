@@ -42,21 +42,26 @@ export async function buildRoleInheritanceTreeById(
   // 获取该角色直接继承的所有角色
   const childRoles = await roleManager.getRoles(`role::${role}`);
 
-  childRoles.forEach(async (childRole) => {
+  // 使用 map 和 Promise.all 替代 forEach，确保所有子节点都构建完成
+  const childNodesPromises = childRoles.map(async (childRole) => {
     // 从 "role::123" 格式中提取ID
     const childLable = childRole.split("::")[1];
     if (childLable !== role) {
       // 避免自引用
-      const childNode = await buildRoleInheritanceTreeById(
+      return await buildRoleInheritanceTreeById(
         roleManager,
         childLable,
         `${role}-${childLable}`
       );
-
-      node.children = node.children || [];
-      node.children.push(childNode);
     }
+    return null;
   });
+
+  // 等待所有子节点构建完成
+  const childNodes = await Promise.all(childNodesPromises);
+
+  // 过滤掉空值，并添加到 children 数组
+  node.children = childNodes.filter((childNode) => childNode !== null);
 
   return node;
 }
