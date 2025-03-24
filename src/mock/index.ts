@@ -60,7 +60,7 @@ export default async function mock() {
   await mockUser({
     username: `kattle`,
     password: `kattle`,
-    menu: ["/user", "/role", "/permission", "/menu"] as unknown as string,
+    menu: (["/user", "/role", "/permission"] as unknown) as string,
     roles: ["超级管理员"],
   });
 
@@ -104,7 +104,7 @@ export default async function mock() {
 
   await PermissionService.setPermissionsByRole("菜单管理员", [
     ["/menu", "get"],
-    ["/menu/:userId", "get"],
+    ["/menu/:username", "get"],
   ]);
 
   // 分配角色给账号

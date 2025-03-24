@@ -17,16 +17,16 @@ export const getMenuTree = async (
   }
 };
 
-export const getMenuTreeByUserId = async (
+export const getMenuTreeByUsername = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     // #swagger.tags = ['menu']
-    const { userId } = req.params;
+    const { username } = req.params;
 
-    const menuTree = await MenuService.getMenuTreeByUserId(userId);
+    const menuTree = await MenuService.getMenuTreeByUsername(username);
 
     res.send(resBodyBuilder(menuTree, "获取菜单树成功"));
   } catch (error) {

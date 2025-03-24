@@ -1,14 +1,14 @@
+import User from "../models/user";
 import { menu } from "../constant/menu";
 import { rebuildTree } from "../utils";
-import UserService from "./userService";
 
 export class MenuService {
   static getMenuTree() {
     return menu;
   }
 
-  static async getMenuTreeByUserId(userId: string) {
-    const user = await UserService.getUserById(+userId);
+  static async getMenuTreeByUsername(username: string) {
+    const user = await User.findOne({ where: { username } });
 
     if (!user) {
       throw new Error("用户不存在");
