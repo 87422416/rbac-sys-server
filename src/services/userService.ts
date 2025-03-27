@@ -23,7 +23,7 @@ export default class UserService {
     
     const salt = await bcrypt.genSalt(CRYPT_SALT);
 
-    sequelize.transaction(async () => {
+    return sequelize.transaction(async () => {
       const res = await User.create({
         ...user,
         menu: JSON.stringify(user.menu),
