@@ -150,6 +150,20 @@ export default class UserService {
   }
 
   static async deleteUsers(ids: number[]) {
+    const rbacEnforcer = await getRBACEnforcer();
+    // 加载策略
+    await rbacEnforcer.loadPolicy();
+    // 删除用户角色
+    const roles = await Promise.all(
+      ids.map(async (id) => {
+        return rbacEnforcer.deleteRolesForUser(`user::${id}`);
+      })
+    );
+    
+    if (roles.every(Boolean)) {
+      throw new Error("删除用户角色失败");
+    }
+    
     return User.destroy({
       where: { id: { [Op.in]: ids } },
     });
